@@ -8,18 +8,18 @@ export default function Home() {
         <div className="flex items-center justify-center gap-4 mb-4">
           <ShieldCheck className="h-12 w-12 text-primary" />
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground font-headline">
-            SWIFT Validator
+            SWIFT LC/BG Validator
           </h1>
         </div>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Validate your SWIFT MT messages with confidence. Get instant feedback, error highlighting, and AI-powered suggestions to ensure your financial communications are flawless.
+          Validate your Letter of Credit and Bank Guarantee messages with confidence. Get instant feedback, error highlighting, and AI-powered suggestions to ensure your trade finance communications are flawless.
         </p>
       </div>
       
       <SwiftValidatorForm />
       
       <footer className="text-center mt-16 text-muted-foreground text-sm">
-        <p>&copy; {new Date().getFullYear()} SWIFT Validator. All Rights Reserved.</p>
+        <p>&copy; {new Date().getFullYear()} SWIFT LC/BG Validator. All Rights Reserved.</p>
       </footer>
     </main>
   );

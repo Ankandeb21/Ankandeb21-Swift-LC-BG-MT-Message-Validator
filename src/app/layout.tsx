@@ -9,8 +9,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'SWIFT Validator',
-  description: 'Validate SWIFT MT messages with AI-powered suggestions.',
+  title: 'SWIFT LC/BG Validator',
+  description: 'Validate your Letter of Credit and Bank Guarantee messages with confidence. Get instant feedback, error highlighting, and AI-powered suggestions to ensure your trade finance communications are flawless.',
 };
 
 export default function RootLayout({
