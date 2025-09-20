@@ -5,7 +5,7 @@ export interface ValidationError {
 
 export const getSwiftMessageType = (message: string): string | null => {
   const block2Match = message.match(/{2:I(\d{3})/);
-  if (block2Match && block2Match[1]) {
+  if (block2Match && block2match[1]) {
     return `MT ${block2Match[1]}`;
   }
   const block2MatchO = message.match(/{2:O(\d{3})/);
@@ -230,69 +230,101 @@ const mt700Rules = [
   },
 ];
 
+const mt701Rules = [
+    {
+    field: ':27:',
+    name: 'Sequence of Total',
+    mandatory: true,
+    regex: /^:27:\s*\d{1,2}\/\d{1,2}$/m,
+    formatError: 'Field :27: (Sequence of Total) must be in the format n/n (e.g., 2/2).',
+  },
+  {
+    field: ':20:',
+    name: 'Documentary Credit Number',
+    mandatory: true,
+    regex: /^:20:\s*[a-zA-Z0-9-]{1,16}$/m,
+    formatError: 'Field :20: (Documentary Credit Number) must be 1 to 16 alphanumeric characters and hyphens.',
+  },
+  {
+    field: ':21:',
+    name: 'Presenting Bank\'s Reference',
+    mandatory: true,
+    regex: /^:21:\s*[a-zA-Z0-9-]{1,16}$/m,
+    formatError: 'Field :21: (Presenting Bank\'s Reference) must be 1 to 16 alphanumeric characters and hyphens.',
+  },
+];
+
+
+const messageRules: { [key: string]: any[] } = {
+  'MT 700': mt700Rules,
+  'MT 701': mt701Rules,
+  // Add other message type rules here.
+};
+
+
 export const validateSwiftMessage = (message: string): ValidationError[] => {
   const errors: ValidationError[] = [];
   
-  // Normalize line endings and extract Block 4 content
-  const block4Match = message.replace(/\r\n/g, '\n').match(/{4:\s*\n((.|\n)*?)\n-}/);
-  if (!block4Match) {
-    errors.push({ field: 'Structure', message: 'Block 4 ({4:...}) is missing or malformed.' });
+  const messageType = getSwiftMessageType(message);
+  const rules = messageType ? messageRules[messageType] || [] : [];
+
+  // If no rules are defined for the message type, perform a basic structure check and return.
+  if (rules.length === 0 && messageType) {
+    if (!message.startsWith('{1:') || !message.includes('{2:')) {
+      errors.push({ field: 'Structure', message: 'Invalid basic block structure. Message must contain at least {1:} and {2:} blocks.' });
+    }
     return errors;
   }
   
-  const block4Content = block4Match[1];
-  
-  // Split content into fields. A field starts with :TAG: and continues until the next :TAG:
-  const fields = block4Content.split(/(?=\n:)/).map(f => f.trim());
+  // If we have rules (currently only for MT 700), proceed with detailed validation.
+  if (messageType === 'MT 700') {
+      const block4Match = message.replace(/\r\n/g, '\n').match(/{4:\s*\n((.|\n)*?)\n-}/);
+      if (!block4Match) {
+        errors.push({ field: 'Structure', message: 'Block 4 ({4:...}) is missing or malformed.' });
+        return errors;
+      }
+      
+      const block4Content = block4Match[1];
+      
+      const fields = block4Content.split(/(?=\n:)/).map(f => f.trim());
 
-  // Check for mandatory fields
-  mt700Rules.forEach(rule => {
-    if (rule.mandatory) {
-      const fieldPresent = fields.some(field => field.startsWith(rule.field));
-      if (!fieldPresent) {
-        // Special handling for alternatives like :41A:/:41D:
-        if (rule.field === ':41A:') {
-          if (!fields.some(field => field.startsWith(':41D:'))) {
-            errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (:41A: or :41D:) is missing.` });
+      rules.forEach(rule => {
+        if (rule.mandatory) {
+          const fieldPresent = fields.some(field => field.startsWith(rule.field));
+          if (!fieldPresent) {
+            if (rule.field === ':41A:') {
+              if (!fields.some(field => field.startsWith(':41D:'))) {
+                errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (:41A: or :41D:) is missing.` });
+              }
+            } else {
+              errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (${rule.field}) is missing.` });
+            }
           }
-        } else {
-          errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (${rule.field}) is missing.` });
         }
-      }
-    }
-  });
+      });
 
-  // Check for format of present fields
-  fields.forEach(field => {
-    const fieldTagMatch = field.match(/^:\d{2}[A-Z]?:/);
-    if (!fieldTagMatch) return;
-    const fieldTag = fieldTagMatch[0];
+      fields.forEach(field => {
+        const fieldTagMatch = field.match(/^:\d{2}[A-Z]?:/);
+        if (!fieldTagMatch) return;
+        const fieldTag = fieldTagMatch[0];
 
-    // Find the first matching rule for the tag
-    const rule = mt700Rules.find(r => fieldTag.startsWith(r.field));
-    
-    if (rule && rule.formatError) {
-      // Create a regex that respects multiline content within a field
-      const fullFieldRegex = new RegExp(rule.regex.source.replace(/\\n/g, '(?:\\r\\n|\\n)'), 'm');
-      
-      // We need to check the field in a way that respects the multiline flag for fields that need it.
-      // For multiline fields, the content starts on the next line.
-      // We'll prepare the field content for the regex test.
-      let testableField = field;
-      if ([':50:', ':59:', ':39C:', ':42C:', ':42P:', ':44D:', ':48:', ':71B:', ':71D:'].includes(rule.field)) {
-         // The regex already accounts for the newline, so we pass the whole field.
-      } else {
-        // For single-line fields, let's process them as they are.
-        testableField = field.replace(/\r\n|\n/g, ' ');
-      }
-      
-      if (!rule.regex.test(testableField)) {
-        errors.push({ field: rule.field, message: rule.formatError });
-      }
-    }
-  });
+        const rule = rules.find(r => fieldTag.startsWith(r.field));
+        
+        if (rule && rule.formatError) {
+          let testableField = field;
+          if (!rule.regex.source.includes('\\n')) {
+             testableField = field.replace(/\r\n|\n/g, ' ');
+          }
+          
+          if (!rule.regex.test(testableField)) {
+            errors.push({ field: rule.field, message: rule.formatError });
+          }
+        }
+      });
+  }
 
-  // Basic block structure check
+
+  // Basic block structure check for all messages
   if (!message.startsWith('{1:') || !message.includes('{2:')) {
     errors.push({ field: 'Structure', message: 'Invalid basic block structure. Message must contain at least {1:} and {2:} blocks.' });
   }
