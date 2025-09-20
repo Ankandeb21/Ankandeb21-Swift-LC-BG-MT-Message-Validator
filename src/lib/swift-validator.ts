@@ -5,7 +5,7 @@ export interface ValidationError {
 
 export const getSwiftMessageType = (message: string): string | null => {
   const block2Match = message.match(/{2:I(\d{3})/);
-  if (block2Match && block2match[1]) {
+  if (block2Match && block2Match[1]) {
     return `MT ${block2Match[1]}`;
   }
   const block2MatchO = message.match(/{2:O(\d{3})/);
