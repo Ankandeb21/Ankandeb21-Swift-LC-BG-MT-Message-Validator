@@ -36,7 +36,7 @@ const initialState: ValidationResult | null = null;
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" size="lg" className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground" aria-disabled={pending}>
+    <Button type="submit" size="lg" className="w-full sm:w-auto" aria-disabled={pending}>
       {pending ? (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -269,7 +269,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
       <div className="flex flex-col gap-4">
-        <Card className="shadow-lg">
+        <Card className="border-border/60">
           <CardHeader>
             <CardTitle>SWIFT Message Input</CardTitle>
           </CardHeader>
@@ -278,7 +278,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
               <Textarea
                 name="message"
                 placeholder="Paste your SWIFT MT message here..."
-                className="min-h-[400px] font-mono text-sm bg-card"
+                className="min-h-[400px] font-mono text-sm bg-background/50 border-input focus-visible:ring-primary"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
@@ -318,28 +318,28 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
       
       <div ref={resultsRef} className="space-y-8 lg:min-h-[570px]">
         {state?.status === 'valid' && (
-          <Card className="shadow-lg border-green-500 border-2 animate-in fade-in-50 zoom-in-95">
+          <Card className="border-green-500/50 bg-green-500/10 animate-in fade-in-50 zoom-in-95">
             <CardHeader className="flex-row items-center gap-4 space-y-0">
               <CheckCircle2 className="h-10 w-10 text-green-500" />
               <CardTitle>Validation Successful</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>The {state.messageType} message is valid.</p>
+              <p className='text-green-400'>The {state.messageType} message is valid.</p>
             </CardContent>
           </Card>
         )}
         
         {state?.status === 'invalid' && (
           <>
-            <Card className="shadow-lg border-destructive/50 border-2 animate-in fade-in-50 zoom-in-95">
+            <Card className="border-destructive/50 bg-destructive/10 animate-in fade-in-50 zoom-in-95">
               <CardHeader className="flex-row items-center gap-4 space-y-0">
                 <XCircle className="h-10 w-10 text-destructive" />
                 <CardTitle>Validation Failed {state.messageType ? `for ${state.messageType}`: ''}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
-                 <p>{state.errors.length} error(s) found in the message.</p>
+                 <p className='text-red-400'>{state.errors.length} error(s) found in the message.</p>
                  {state.errors.map((error, index) => (
-                    <Alert key={index} variant="destructive">
+                    <Alert key={index} variant="destructive" className='bg-destructive/20'>
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>{error.field}</AlertTitle>
                       <AlertDescription>{error.message}</AlertDescription>
@@ -349,7 +349,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
             </Card>
 
             {state.suggestions && state.suggestions.length > 0 && (
-              <Card className="shadow-lg border-primary/50 border-2 animate-in fade-in-50 zoom-in-95" style={{ animationDelay: '150ms' }}>
+              <Card className="border-primary/30 bg-primary/10 animate-in fade-in-50 zoom-in-95" style={{ animationDelay: '150ms' }}>
                 <CardHeader className="flex-row items-center gap-4 space-y-0">
                     <Lightbulb className="h-10 w-10 text-primary" />
                     <CardTitle>AI-Powered Fix Suggestions</CardTitle>
@@ -359,7 +359,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
                     {state.suggestions?.map((suggestion, index) => (
                       <AccordionItem value={`item-${index}`} key={index}>
                         <AccordionTrigger>Suggestion #{index + 1}</AccordionTrigger>
-                        <AccordionContent className="prose prose-sm max-w-none">
+                        <AccordionContent className="prose prose-sm max-w-none text-muted-foreground">
                           <p>{suggestion}</p>
                         </AccordionContent>
                       </AccordionItem>
