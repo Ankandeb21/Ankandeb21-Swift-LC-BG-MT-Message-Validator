@@ -33,8 +33,10 @@ import {
 
 const initialState: ValidationResult | null = null;
 
-const validSamples = [
-  { name: 'MT 700 (1/2)', message: `{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
+const sampleMessages = [
+  {
+    name: 'MT 700 - Issue of a Documentary Credit (Valid)',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
 :27: 1/1
 :40A: IRREVOCABLE
 :20: OUR-REF-12345
@@ -52,8 +54,26 @@ BY NEGOTIATION
 :49: CONFIRM
 :71B: ALL CHARGES OUTSIDE OF ISSUING
 BANK ARE FOR ACCOUNT OF BENEFICIARY
--}`},
-  { name: 'MT 700 (2/2)', message: `{1:F01YOURCODEBB20_0000000000}{2:I701MYBANKBBAAXXXXN}{3:{108:MT700 12345}}{4:
+-}`
+  },
+  {
+    name: 'MT 700 - Issue of a Documentary Credit (Invalid)',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
+:27: 1 OF 1
+:40A: IRRECOVABLE
+:20: OUR-REF-12345-TOO-LONG-REFERENCE
+:31C: 20240725
+:31D: 241231
+:50:
+APPLICANT NAME
+:32B: 100000,00
+:41D: ANY BANK
+:49: MAYBE
+-}`
+  },
+  {
+    name: 'MT 701 - Issue of a Documentary Credit (Subsequent)',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I701MYBANKBBAAXXXXN}{3:{108:MT700 12345}}{4:
 :27: 2/2
 :45B: DESCRIPTION OF GOODS & SERVICES
 FURTHER DESCRIPTION OF GOODS CONTINUED
@@ -61,8 +81,11 @@ FURTHER DESCRIPTION OF GOODS CONTINUED
 FURTHER DOCUMENTS REQUIRED CONTINUED
 :47B: ADDITIONAL CONDITIONS
 FURTHER ADDITIONAL CONDITIONS CONTINUED
--}`},
-  { name: 'MT 707', message: `{1:F01YOURCODEBB20_0000000000}{2:I707MYBANKBBAAXXXXN}{4:
+-}`
+  },
+  {
+    name: 'MT 707 - Amendment to a Documentary Credit',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I707MYBANKBBAAXXXXN}{4:
 :20: AMEND-REF-67890
 :21: OUR-REF-12345
 :31C: 240726
@@ -74,8 +97,11 @@ BENEFICIARY ADDRESS
 :32B: USD105000,00
 :34B: USD5000,00
 :79: NARRATIVE OF AMENDMENT...
--}`},
-  { name: 'MT 710', message: `{1:F01YOURCODEBB20_0000000000}{2:I710MYBANKBBAAXXXXN}{4:
+-}`
+  },
+  {
+    name: 'MT 710 - Advice of a Third Bank\'s DC',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I710MYBANKBBAAXXXXN}{4:
 :20: THEIR-REF-54321
 :21: OUR-REF-12345
 :31C: 240725
@@ -86,16 +112,22 @@ APPLICANT NAME
 BENEFICIARY NAME
 :32B: USD100000,00
 :72: ADVISING BANK'S CHARGES...
--}`},
-  { name: 'MT 730', message: `{1:F01YOURCODEBB20_0000000000}{2:I730MYBANKBBAAXXXXN}{4:
+-}`
+  },
+  {
+    name: 'MT 730 - Acknowledgment of LC',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I730MYBANKBBAAXXXXN}{4:
 :20: ACK-REF-111
 :21: OUR-REF-12345
 :30: 240728
 :32B: USD100000,00
 :71B: OUR CHARGES...
 :72: WE ACKNOWLEDGE RECEIPT OF THE DOCUMENTARY CREDIT.
--}`},
-  { name: 'MT 740', message: `{1:F01YOURCODEBB20_0000000000}{2:I740MYBANKBBAAXXXXN}{4:
+-}`
+  },
+  {
+    name: 'MT 740 - Authorization to Reimburse',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I740MYBANKBBAAXXXXN}{4:
 :20: AUTH-REF-333
 :31D: 250131LONDON
 :40B: IRREVOCABLE
@@ -103,8 +135,11 @@ BENEFICIARY NAME
 :42A: DRAWEEBANKBIC
 :32B: USD50000,00
 :71B: ALL CHARGES ARE FOR...
--}`},
-  { name: 'MT 760', message: `{1:F01YOURCODEBB20_0000000000}{2:I760MYBANKBBAAXXXXN}{4:
+-}`
+  },
+  {
+    name: 'MT 760 - Guarantee',
+    message: `{1:F01YOURCODEBB20_0000000000}{2:I760MYBANKBBAAXXXXN}{4:
 :27: 1/1
 :20: GUARANTEE-REF-1
 :30: 240801
@@ -112,8 +147,10 @@ BENEFICIARY NAME
 :41A: ISSUINGBANKBIC
 :45L: GUARANTEE DETAILS...
 :77C: FURTHER DETAILS...
--}`},
+-}`
+  }
 ];
+
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -176,7 +213,7 @@ export function SwiftValidatorForm() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    {validSamples.map((sample) => (
+                    {sampleMessages.map((sample) => (
                       <DropdownMenuItem
                         key={sample.name}
                         onSelect={() => handleSampleSelect(sample.message)}
