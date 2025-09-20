@@ -129,7 +129,8 @@ REIMBURSING BANK'S CHARGES...
 :21: OUR-REF-{RANDOM_REF}
 :30: {DATE_YYMMDD}
 :32B: USD{RANDOM_AMOUNT}
-:71B: OUR CHARGES...
+:71B:
+OUR CHARGES...
 :72:
 WE ACKNOWLEDGE RECEIPT OF THE DOCUMENTARY CREDIT.
 -}`
@@ -165,7 +166,8 @@ ALL CHARGES ARE FOR...
 :21: DC-NUMBER
 :32B: USD{RANDOM_AMOUNT_SMALL}
 :53A: ISSUINGBANKBIC
-:71B: OUR CHARGES...
+:71B:
+OUR CHARGES...
 -}`
   },
   {
@@ -302,9 +304,9 @@ export function SwiftValidatorForm() {
     futureDate1y.setFullYear(today.getFullYear() + 1);
 
     return template
-      .replace(/{RANDOM_REF}/g, Math.random().toString(36).substring(2, 10).toUpperCase())
+      .replace(/{RANDOM_REF}/g, Math.random().toString(36).substring(2, 12).toUpperCase())
       .replace(/{RANDOM_REF_SHORT}/g, Math.random().toString(36).substring(2, 8).toUpperCase())
-      .replace(/{RANDOM_REF_ALT}/g, Math.random().toString(36).substring(2, 10).toUpperCase())
+      .replace(/{RANDOM_REF_ALT}/g, Math.random().toString(36).substring(2, 12).toUpperCase())
       .replace(/{DATE_YYMMDD}/g, format(today, 'yyMMdd'))
       .replace(/{DATE_YYMMDD_PLUS_6M}/g, format(futureDate6m, 'yyMMdd'))
       .replace(/{DATE_YYMMDD_PLUS_1Y}/g, format(futureDate1y, 'yyMMdd'))
