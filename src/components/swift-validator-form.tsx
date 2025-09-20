@@ -1,6 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
   AlertCircle,
@@ -52,7 +53,7 @@ function SubmitButton() {
 }
 
 export function SwiftValidatorForm() {
-  const [state, formAction] = useFormState(validateMessageAction, initialState);
+  const [state, formAction] = useActionState(validateMessageAction, initialState);
   const [message, setMessage] = useState('');
   const resultsRef = useRef<HTMLDivElement>(null);
   
