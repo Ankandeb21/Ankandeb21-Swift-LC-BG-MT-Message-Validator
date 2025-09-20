@@ -65,9 +65,9 @@ BY NEGOTIATION
 :47A:
 + CONDITIONS
 :49: CONFIRM
-:53A: REIMBURSINGBANKBIC
+:53A: {RANDOM_BIC}
 :71B:
-ALL CHARGES FOR ACCOUNT OF APPLICANT
+CHARGES
 :78:
 INSTRUCTIONS TO PAYING/ACCEPTING/NEGOTIATING BANK...
 -}`
@@ -152,7 +152,7 @@ WE ACKNOWLEDGE RECEIPT OF THE DOCUMENTARY CREDIT.
 :20: ADVICE-{RANDOM_REF_SHORT}
 :21: YOUR-REF-123
 :32A: {DATE_YYMMDD}USD{RANDOM_AMOUNT_SMALL}
-:53A: PAYINGBANKBIC
+:53A: {RANDOM_BIC}
 :72:
 WE HAVE NEGOTIATED COMPLYING PRESENTATION.
 -}`
@@ -163,9 +163,9 @@ WE HAVE NEGOTIATED COMPLYING PRESENTATION.
 :20: AUTH-{RANDOM_REF_SHORT}
 :31D: {DATE_YYMMDD_PLUS_1Y} LONDON
 :40B: IRREVOCABLE
-:41A: REIMBURSINGBANKBIC
+:41A: {RANDOM_BIC}
 BY ...
-:42A: DRAWEEBANKBIC
+:42A: {RANDOM_BIC}
 :32B: USD{RANDOM_AMOUNT}
 :71B:
 ALL CHARGES ARE FOR...
@@ -177,7 +177,7 @@ ALL CHARGES ARE FOR...
 :20: CLAIM-{RANDOM_REF_SHORT}
 :21: {DC_NUMBER}
 :32B: USD{RANDOM_AMOUNT_SMALL}
-:53A: ISSUINGBANKBIC
+:53A: {RANDOM_BIC}
 :71B:
 OUR CHARGES...
 -}`
@@ -209,7 +209,7 @@ DESCRIPTION OF DISCREPANCIES...
 :20: AUTH-PAY-{RANDOM_REF_SHORT}
 :21: {DC_NUMBER}
 :32B: USD{RANDOM_AMOUNT}
-:53A: PAYINGBANKBIC
+:53A: {RANDOM_BIC}
 :72:
 WE AUTHORIZE YOU TO PAY/ACCEPT/NEGOTIATE...
 -}`
@@ -223,7 +223,7 @@ WE AUTHORIZE YOU TO PAY/ACCEPT/NEGOTIATE...
 :30: {DATE_YYMMDD}
 :40C: URDG LATEST VERSION
 :22D: ADVI
-:52A: ADVISINGBANKBIC
+:52A: {RANDOM_BIC}
 :59:
 BENEFICIARY NAME
 ADDRESS
@@ -319,11 +319,16 @@ export function SwiftValidatorForm() {
 
     const randomRef = () => Math.random().toString(36).substring(2, 12).toUpperCase();
     const randomRefShort = () => Math.random().toString(36).substring(2, 8).toUpperCase();
+    const randomBic = () => {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const country = chars.charAt(Math.floor(Math.random() * chars.length)) + chars.charAt(Math.floor(Math.random() * chars.length));
+      return `TEST${country}B1XXX`;
+    };
 
     return template
       .replace(/{RANDOM_REF}/g, randomRef())
       .replace(/{RANDOM_REF_SHORT}/g, randomRefShort())
-      .replace(/{RANDOM_REF_ALT}/g, randomRef())
+      .replace(/{RANDOM_BIC}/g, randomBic())
       .replace(/{PREV_MSG_REF}/g, randomRef())
       .replace(/{DC_NUMBER}/g, `DC${randomRefShort()}`)
       .replace(/{ORIGINAL_AUTH_REF}/g, `AUTH${randomRefShort()}`)
