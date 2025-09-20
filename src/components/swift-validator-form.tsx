@@ -269,7 +269,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
       <div className="flex flex-col gap-4">
-        <Card>
+        <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>SWIFT Message Input</CardTitle>
           </CardHeader>
@@ -278,7 +278,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
               <Textarea
                 name="message"
                 placeholder="Paste your SWIFT MT message here..."
-                className="min-h-[400px] font-mono text-sm bg-background/50 focus-visible:ring-primary"
+                className="min-h-[400px] font-mono text-sm bg-background/50 focus-visible:ring-primary border-2"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
@@ -318,26 +318,26 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
       
       <div ref={resultsRef} className="space-y-8 lg:min-h-[570px]">
         {state?.status === 'valid' && (
-          <Card className="border-green-500/50 bg-green-500/10 animate-in fade-in-50 zoom-in-95">
+          <Card className="border-accent/50 bg-accent/10 animate-in fade-in-50 zoom-in-95 shadow-lg">
             <CardHeader className="flex-row items-center gap-4 space-y-0">
-              <CheckCircle2 className="h-10 w-10 text-green-500" />
+              <CheckCircle2 className="h-10 w-10 text-accent" />
               <CardTitle>Validation Successful</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className='text-green-600 dark:text-green-400'>The {state.messageType} message is valid.</p>
+              <p className='text-accent-foreground/80'>The {state.messageType} message is valid.</p>
             </CardContent>
           </Card>
         )}
         
         {state?.status === 'invalid' && (
           <>
-            <Card className="border-destructive/50 bg-destructive/10 animate-in fade-in-50 zoom-in-95">
+            <Card className="border-destructive/50 bg-destructive/10 animate-in fade-in-50 zoom-in-95 shadow-lg">
               <CardHeader className="flex-row items-center gap-4 space-y-0">
                 <XCircle className="h-10 w-10 text-destructive" />
                 <CardTitle>Validation Failed {state.messageType ? `for ${state.messageType}`: ''}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
-                 <p className='text-red-600 dark:text-red-400'>{state.errors.length} error(s) found in the message.</p>
+                 <p className='text-destructive/90'>{state.errors.length} error(s) found in the message.</p>
                  {state.errors.map((error, index) => (
                     <Alert key={index} variant="destructive" className='bg-destructive/10'>
                       <AlertCircle className="h-4 w-4" />
@@ -349,7 +349,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
             </Card>
 
             {state.suggestions && state.suggestions.length > 0 && (
-              <Card className="border-primary/30 bg-primary/5 animate-in fade-in-50 zoom-in-95" style={{ animationDelay: '150ms' }}>
+              <Card className="border-primary/30 bg-primary/5 animate-in fade-in-50 zoom-in-95 shadow-lg" style={{ animationDelay: '150ms' }}>
                 <CardHeader className="flex-row items-center gap-4 space-y-0">
                     <Lightbulb className="h-10 w-10 text-primary" />
                     <CardTitle>AI-Powered Fix Suggestions</CardTitle>
