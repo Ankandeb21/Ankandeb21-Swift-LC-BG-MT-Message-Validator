@@ -22,7 +22,7 @@ const multiline = (lines: number, chars: number) => new RegExp(`^(.{1,${chars}}(
 const alphanumeric = () => /^[a-zA-Z0-9]+$/;
 const bic = () => /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 const date = () => /^\d{6}$/;
-const currencyAndAmount = () => /^[A-Z]{3}\d{1,15}(,\d{1,2})?$/;
+const currencyAndAmount = () => /^[A-Z]{3}\d{1,15},\d{1,2}$/;
 const narrative = () => /^(.|\r\n?|\n)+$/m; // Very basic check for narrative text
 
 const createRule = (
@@ -41,8 +41,8 @@ const mt700Rules = [
   createRule('31C', 'Date of Issue', false, date(), 'Must be a valid date in YYMMDD format.'),
   createRule('40E', 'Applicable Rules', false, /^(UCP\s+LATEST\s+VERSION|ISP\s+LATEST\s+VERSION|OTHR)\s*(\/.{1,35})?$/m, 'Invalid format or codeword.'),
   createRule('31D', 'Date and Place of Expiry', true, /^\d{6}.{1,29}$/m, 'Must be YYMMDD date followed by a place.'),
-  createRule('50', 'Applicant', true, multiline(4, 50), 'Must be up to 4 lines of 50 characters each.'),
-  createRule('59', 'Beneficiary', true, multiline(4, 50), 'Must be up to 4 lines of 50 characters each.'),
+  createRule('50', 'Applicant', true, multiline(4, 35), 'Must be up to 4 lines of 35 characters each.'),
+  createRule('59', 'Beneficiary', true, multiline(4, 35), 'Must be up to 4 lines of 35 characters each.'),
   createRule('32B', 'Currency Code, Amount', true, currencyAndAmount(), 'Invalid currency code or amount format.'),
   createRule('41A', 'Available With... By...', true, narrative(), 'Field is mandatory.', '41D'),
   createRule('41D', 'Available With... By...', true, narrative(), 'Field is mandatory.', '41A'),
@@ -52,7 +52,7 @@ const mt700Rules = [
   createRule('45A', 'Description of Goods and/or Services', false, multiline(100, 50), 'Exceeds max length.'),
   createRule('46A', 'Documents Required', false, multiline(100, 50), 'Exceeds max length.'),
   createRule('47A', 'Additional Conditions', false, multiline(100, 50), 'Exceeds max length.'),
-  createRule('48', 'Period for Presentation', false, multiline(4, 50), 'Exceeds max length.'),
+  createRule('48', 'Period for Presentation', false, multiline(4, 35), 'Exceeds max length.'),
   createRule('49', 'Confirmation Instructions', true, /^(CONFIRM|MAY\sADD|WITHOUT)$/m, 'Must be CONFIRM, MAY ADD, or WITHOUT.'),
   createRule('53A', 'Reimbursing Bank', false, bic(), 'Must be a valid BIC.'),
   createRule('71B', 'Charges', false, multiline(6, 35), 'Exceeds max length (6 lines of 35 chars).'),
@@ -72,7 +72,7 @@ const mt707Rules = [
   createRule('31C', 'Date of Issue', true, date(), 'Must be YYMMDD.'),
   createRule('30', 'Date of Amendment', true, date(), 'Must be YYMMDD.'),
   createRule('26E', 'Number of Amendment', true, /^\d{1,3}\/.{1,16}$/m, 'Format n/narrative.'),
-  createRule('59', 'Beneficiary', false, multiline(4, 50), 'Exceeds max length.'),
+  createRule('59', 'Beneficiary', false, multiline(4, 35), 'Exceeds max length.'),
   createRule('32B', 'Increase of DC Amount', false, currencyAndAmount(), 'Invalid format.'),
   createRule('33B', 'Decrease of DC Amount', false, currencyAndAmount(), 'Invalid format.'),
   createRule('34B', 'New DC Amount', false, currencyAndAmount(), 'Invalid format.'),
@@ -84,8 +84,8 @@ const mt710Rules = [
     createRule('21', 'Issuing Bank\'s Reference', true, length(16), 'Max 16 characters.'),
     createRule('31C', 'Date of Issue', true, date(), 'Must be YYMMDD.'),
     createRule('31D', 'Date and Place of Expiry', true, /^\d{6}.{1,29}$/m, 'Must be YYMMDD date followed by a place.'),
-    createRule('50', 'Applicant', true, multiline(4, 50), 'Exceeds max length.'),
-    createRule('59', 'Beneficiary', true, multiline(4, 50), 'Exceeds max length.'),
+    createRule('50', 'Applicant', true, multiline(4, 35), 'Exceeds max length.'),
+    createRule('59', 'Beneficiary', true, multiline(4, 35), 'Exceeds max length.'),
     createRule('32B', 'Currency Code, Amount', true, currencyAndAmount(), 'Invalid currency/amount format.'),
     createRule('72', 'Sender to Receiver Information', false, multiline(6, 35), 'Exceeds max length.'),
 ];
@@ -96,7 +96,7 @@ const mt720Rules = [
     createRule('31C', 'Date of Transfer', true, date(), 'Must be YYMMDD.'),
     createRule('40F', 'Applicable Rules', true, /^(UCP\s+LATEST\s+VERSION|OTHR)$/m, 'Invalid codeword.'),
     createRule('32B', 'Transferred Amount', true, currencyAndAmount(), 'Invalid currency/amount format.'),
-    createRule('59', 'Transferee (New Beneficiary)', true, multiline(4, 50), 'Exceeds max length.'),
+    createRule('59', 'Transferee (New Beneficiary)', true, multiline(4, 35), 'Exceeds max length.'),
     createRule('72', 'Sender to Receiver Information', false, multiline(6, 35), 'Exceeds max length.'),
 ];
 
@@ -112,7 +112,7 @@ const mt730Rules = [
 const mt732Rules = [
     createRule('20', 'Claiming Bank\'s Reference', true, length(16), 'Max 16 characters.'),
     createRule('21', 'Issuing Bank\'s Reference', true, length(16), 'Max 16 characters.'),
-    createRule('32A', 'Date, Currency, Amount', true, /^\d{6}[A-Z]{3}\d{1,15}(,\d{1,2})?$/m, 'Format must be YYMMDDCCYAMOUNT.'),
+    createRule('32A', 'Date, Currency, Amount', true, /^\d{6}[A-Z]{3}\d{1,15},\d{1,2}$/m, 'Format must be YYMMDDCCYAMOUNT.'),
     createRule('53A', 'Sender\'s Correspondent', false, bic(), 'Must be a valid BIC.'),
     createRule('72', 'Sender to Receiver Information', false, multiline(6, 35), 'Exceeds max length.'),
 ];
@@ -166,7 +166,7 @@ const mt760Rules = [
     createRule('40C', 'Applicable Rules', true, /^(URDG\s+LATEST\s+VERSION|ISPR\s+LATEST\s+VERSION|OTHR)$/m, 'Invalid codeword.'),
     createRule('22D', 'Form of Guarantee', true, /^(ADVI|PREP|AUTH|NOTI)$/m, 'Invalid form of guarantee.'),
     createRule('52A', 'Issuing Bank', false, bic(), 'Must be a valid BIC.'),
-    createRule('59', 'Beneficiary', true, multiline(4, 50), 'Exceeds max length.'),
+    createRule('59', 'Beneficiary', true, multiline(4, 35), 'Exceeds max length.'),
     createRule('77C', 'Details of Guarantee', true, multiline(100, 65), 'Exceeds max length.'),
 ];
 
@@ -242,8 +242,7 @@ export const validateSwiftMessage = (message: string): ValidationError[] => {
     if (!messageType) {
       errors.push({ field: 'Message Type', message: 'Could not determine SWIFT message type from Block 2.' });
     } else {
-      // Known type without rules, considered a pass for now, but could add a warning.
-      // errors.push({ field: 'Validator', message: `No validation rules defined for ${messageType}.` });
+      errors.push({ field: 'Validator', message: `No validation rules defined for ${messageType}.` });
     }
     return errors;
   }
