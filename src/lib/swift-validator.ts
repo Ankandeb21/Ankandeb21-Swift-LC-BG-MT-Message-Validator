@@ -268,66 +268,66 @@ export const validateSwiftMessage = (message: string): ValidationError[] => {
   const messageType = getSwiftMessageType(message);
   const rules = messageType ? messageRules[messageType] || [] : [];
 
-  // If no rules are defined for the message type, perform a basic structure check and return.
-  if (rules.length === 0 && messageType) {
-    if (!message.startsWith('{1:') || !message.includes('{2:')) {
-      errors.push({ field: 'Structure', message: 'Invalid basic block structure. Message must contain at least {1:} and {2:} blocks.' });
-    }
-    return errors;
-  }
-  
-  // If we have rules (currently only for MT 700), proceed with detailed validation.
-  if (messageType === 'MT 700') {
-      const block4Match = message.replace(/\r\n/g, '\n').match(/{4:\s*\n((.|\n)*?)\n-}/);
-      if (!block4Match) {
-        errors.push({ field: 'Structure', message: 'Block 4 ({4:...}) is missing or malformed.' });
-        return errors;
-      }
-      
-      const block4Content = block4Match[1];
-      
-      const fields = block4Content.split(/(?=\n:)/).map(f => f.trim());
-
-      rules.forEach(rule => {
-        if (rule.mandatory) {
-          const fieldPresent = fields.some(field => field.startsWith(rule.field));
-          if (!fieldPresent) {
-            if (rule.field === ':41A:') {
-              if (!fields.some(field => field.startsWith(':41D:'))) {
-                errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (:41A: or :41D:) is missing.` });
-              }
-            } else {
-              errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (${rule.field}) is missing.` });
-            }
-          }
-        }
-      });
-
-      fields.forEach(field => {
-        const fieldTagMatch = field.match(/^:\d{2}[A-Z]?:/);
-        if (!fieldTagMatch) return;
-        const fieldTag = fieldTagMatch[0];
-
-        const rule = rules.find(r => fieldTag.startsWith(r.field));
-        
-        if (rule && rule.formatError) {
-          let testableField = field;
-          if (!rule.regex.source.includes('\\n')) {
-             testableField = field.replace(/\r\n|\n/g, ' ');
-          }
-          
-          if (!rule.regex.test(testableField)) {
-            errors.push({ field: rule.field, message: rule.formatError });
-          }
-        }
-      });
-  }
-
-
   // Basic block structure check for all messages
   if (!message.startsWith('{1:') || !message.includes('{2:')) {
     errors.push({ field: 'Structure', message: 'Invalid basic block structure. Message must contain at least {1:} and {2:} blocks.' });
   }
+
+  // If no rules are defined for the message type, return after basic checks.
+  if (rules.length === 0) {
+      if (messageType) { // A known message type with no specific rules
+          // Potentially add more generic validation here in the future
+      } else { // An unknown or unidentifiable message type
+          errors.push({ field: 'Message Type', message: 'Could not determine SWIFT message type from Block 2.' });
+      }
+      return errors;
+  }
+  
+  // If we have rules, proceed with detailed validation.
+  const block4Match = message.replace(/\r\n/g, '\n').match(/{4:\s*\n((.|\n)*?)\n-}/);
+  if (!block4Match) {
+    errors.push({ field: 'Structure', message: 'Block 4 ({4:...}) is missing or malformed.' });
+    return errors;
+  }
+  
+  const block4Content = block4Match[1];
+  
+  const fields = block4Content.split(/(?=\n:)/).map(f => f.trim());
+
+  rules.forEach(rule => {
+    if (rule.mandatory) {
+      const fieldPresent = fields.some(field => field.startsWith(rule.field));
+      if (!fieldPresent) {
+        if (rule.field === ':41A:') {
+          if (!fields.some(field => field.startsWith(':41D:'))) {
+            errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (:41A: or :41D:) is missing.` });
+          }
+        } else {
+          errors.push({ field: rule.field, message: `Mandatory field ${rule.name} (${rule.field}) is missing.` });
+        }
+      }
+    }
+  });
+
+  fields.forEach(field => {
+    const fieldTagMatch = field.match(/^:\d{2}[A-Z]?:/);
+    if (!fieldTagMatch) return;
+    const fieldTag = fieldTagMatch[0];
+
+    const rule = rules.find(r => fieldTag.startsWith(r.field));
+    
+    if (rule && rule.formatError) {
+      let testableField = field;
+      if (!rule.regex.source.includes('\\n')) {
+          testableField = field.replace(/\r\n|\n/g, ' ');
+      }
+      
+      if (!rule.regex.test(testableField)) {
+        errors.push({ field: rule.field, message: rule.formatError });
+      }
+    }
+  });
+
 
   // Prevent duplicate error messages
   return [...new Map(errors.map(item => [item.message, item])).values()];
