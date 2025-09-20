@@ -55,7 +55,8 @@ BENEFICIARY ADDRESS
 :41D: ANY BANK
 BY NEGOTIATION
 :49: CONFIRM
-:71B: ALL CHARGES OUTSIDE...
+:71B:
+ALL CHARGES OUTSIDE...
 -}`
   },
   {
@@ -302,7 +303,7 @@ export function SwiftValidatorForm() {
 
     return template
       .replace(/{RANDOM_REF}/g, Math.random().toString(36).substring(2, 10).toUpperCase())
-      .replace(/{RANDOM_REF_SHORT}/g, Math.random().toString(36).substring(2, 12).toUpperCase())
+      .replace(/{RANDOM_REF_SHORT}/g, Math.random().toString(36).substring(2, 8).toUpperCase())
       .replace(/{RANDOM_REF_ALT}/g, Math.random().toString(36).substring(2, 10).toUpperCase())
       .replace(/{DATE_YYMMDD}/g, format(today, 'yyMMdd'))
       .replace(/{DATE_YYMMDD_PLUS_6M}/g, format(futureDate6m, 'yyMMdd'))
