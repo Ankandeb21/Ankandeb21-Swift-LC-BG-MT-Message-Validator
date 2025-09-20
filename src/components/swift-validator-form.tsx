@@ -55,8 +55,10 @@ export function SwiftValidatorForm() {
     }
   }, [state]);
 
-  const handleSampleClick = () => {
-    setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
+  const handleSampleClick = (type: string) => {
+    switch (type) {
+      case 'valid-700':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
 :27: 1/1
 :40A: IRREVOCABLE
 :20: OUR-REF-12345
@@ -68,17 +70,16 @@ APPLICANT ADDRESS
 :59:
 BENEFICIARY NAME
 BENEFICIARY ADDRESS
-:32B: USD100000,
+:32B: USD100000,00
 :41D: ANY BANK
 BY NEGOTIATION
 :49: CONFIRM
 :71B: ALL CHARGES OUTSIDE OF ISSUING
 BANK ARE FOR ACCOUNT OF BENEFICIARY
 -}`);
-  };
-  
-  const handleInvalidSampleClick = () => {
-    setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
+        break;
+      case 'invalid-700':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
 :40A: IREVOCABLE
 :20:
 :31D: 241231
@@ -89,6 +90,62 @@ APPLICANT ADDRESS
 :41D: ANY BANK
 BY NEGOTIATION
 -}`);
+        break;
+      case '701':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I701MYBANKBBAAXXXXN}{3:{108:MT700 12345}}{4:
+:27: 2/2
+:45B: DESCRIPTION OF GOODS & SERVICES
+FURTHER DESCRIPTION OF GOODS CONTINUED
+:46B: DOCUMENTS REQUIRED
+FURTHER DOCUMENTS REQUIRED CONTINUED
+:47B: ADDITIONAL CONDITIONS
+FURTHER ADDITIONAL CONDITIONS CONTINUED
+-}`);
+        break;
+      case '707':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I707MYBANKBBAAXXXXN}{4:
+:20: AMEND-REF-67890
+:21: OUR-REF-12345
+:31C: 240726
+:30: 240726
+:26E: 001/LATEST SHIP DATE
+:59:
+BENEFICIARY NAME
+BENEFICIARY ADDRESS
+:32B: USD105000,
+:34B: USD5000,
+:79: NARRATIVE OF AMENDMENT...
+-}`);
+        break;
+      case '710':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I710MYBANKBBAAXXXXN}{4:
+:20: THEIR-REF-54321
+:21: OUR-REF-12345
+:31C: 240725
+:31D: 241231LONDON
+:50:
+APPLICANT NAME
+:59:
+BENEFICIARY NAME
+:32B: USD100000,
+:72: ADVISING BANK'S CHARGES...
+-}`);
+        break;
+      case '720':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I720MYBANKBBAAXXXXN}{4:
+:20: TRANSFER-REF-98765
+:21: ORIGINAL-LC-REF-12345
+:31D: 241230NEWYORK
+:52A: ISSUING BANK OF ORIGINAL LC
+:59:
+SECOND BENEFICIARY NAME
+ADDRESS
+:32B: USD50000,
+:40F: APPLICABLE RULES...
+:72: REIMBURSEMENT INSTRUCTIONS...
+-}`);
+        break;
+    }
   };
 
   return (
@@ -102,7 +159,7 @@ BY NEGOTIATION
             <form action={formAction} className="space-y-4">
               <Textarea
                 name="message"
-                placeholder="Paste your SWIFT MT700 message here..."
+                placeholder="Paste your SWIFT MT message here..."
                 className="min-h-[400px] font-mono text-sm bg-card"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -110,8 +167,14 @@ BY NEGOTIATION
               />
               <div className="flex flex-col sm:flex-row gap-2">
                 <SubmitButton />
-                <Button type="button" variant="outline" onClick={handleSampleClick}>Load Valid Sample</Button>
-                <Button type="button" variant="outline" onClick={handleInvalidSampleClick}>Load Invalid Sample</Button>
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                <Button type="button" variant="outline" onClick={() => handleSampleClick('valid-700')}>Load MT700 (Valid)</Button>
+                <Button type="button" variant="outline" onClick={() => handleSampleClick('invalid-700')}>Load MT700 (Invalid)</Button>
+                <Button type="button" variant="outline" onClick={() => handleSampleClick('701')}>Load MT701</Button>
+                <Button type="button" variant="outline" onClick={() => handleSampleClick('707')}>Load MT707</Button>
+                <Button type="button" variant="outline" onClick={() => handleSampleClick('710')}>Load MT710</Button>
+                <Button type="button" variant="outline" onClick={() => handleSampleClick('720')}>Load MT720</Button>
               </div>
             </form>
           </CardContent>
