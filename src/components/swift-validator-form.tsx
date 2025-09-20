@@ -44,6 +44,7 @@ const sampleMessages = [
 :40A: IRREVOCABLE
 :20: DC-{RANDOM_REF_SHORT}
 :31C: {DATE_YYMMDD}
+:40E: UCP LATEST VERSION
 :31D: {DATE_YYMMDD_PLUS_6M} LONDON
 :50:
 APPLICANT NAME
@@ -54,14 +55,32 @@ BENEFICIARY ADDRESS
 :32B: USD{RANDOM_AMOUNT}
 :41D: ANY BANK
 BY NEGOTIATION
+:43P: ALLOWED
+:43T: ALLOWED
+:44E: ANY PORT IN JAPAN
+:44F: ANY PORT IN USA
+:44C: {DATE_YYMMDD_PLUS_3M}
+:45A:
++ GOODS
+:46A:
++ DOCUMENTS
+:47A:
++ CONDITIONS
 :49: CONFIRM
+:53A: REIMBURSINGBANKBIC
 :71B:
 ALL CHARGES OUTSIDE...
+:48:
+DOCUMENTS TO BE PRESENTED WITHIN 21 DAYS...
+:78:
+INSTRUCTIONS TO PAYING/ACCEPTING/NEGOTIATING BANK...
 -}`
   },
   {
     name: 'MT 701 - Issue of a Documentary Credit (Second & Subsequent Pages)',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I701MYBANKBBAAXXXXN}{3:{108:MT700{RANDOM_REF}}}{4:
+:20: DC-{RANDOM_REF_SHORT}
+:21: PREV-MSG-REF
 :27: 2/2
 :45B:
 DESCRIPTION OF GOODS & SERVICES
@@ -300,6 +319,8 @@ export function SwiftValidatorForm() {
 
   const generateRandomMessage = (template: string) => {
     const today = new Date();
+    const futureDate3m = new Date(today);
+    futureDate3m.setMonth(today.getMonth() + 3);
     const futureDate6m = new Date(today);
     futureDate6m.setMonth(today.getMonth() + 6);
     const futureDate1y = new Date(today);
@@ -310,6 +331,7 @@ export function SwiftValidatorForm() {
       .replace(/{RANDOM_REF_SHORT}/g, Math.random().toString(36).substring(2, 8).toUpperCase())
       .replace(/{RANDOM_REF_ALT}/g, Math.random().toString(36).substring(2, 12).toUpperCase())
       .replace(/{DATE_YYMMDD}/g, format(today, 'yyMMdd'))
+      .replace(/{DATE_YYMMDD_PLUS_3M}/g, format(futureDate3m, 'yyMMdd'))
       .replace(/{DATE_YYMMDD_PLUS_6M}/g, format(futureDate6m, 'yyMMdd'))
       .replace(/{DATE_YYMMDD_PLUS_1Y}/g, format(futureDate1y, 'yyMMdd'))
       .replace(/{RANDOM_AMOUNT}/g, (Math.floor(Math.random() * 900000) + 100000).toFixed(2).replace('.', ','))
