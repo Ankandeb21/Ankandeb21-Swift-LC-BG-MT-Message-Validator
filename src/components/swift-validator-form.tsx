@@ -220,6 +220,48 @@ ADDRESS
 :72: WE AUTHORIZE YOU TO PAY/ACCEPT/NEGOTIATE THE DOCUMENTS PRESENTED UNDER THE SUBJECT CREDIT NOTWITHSTANDING THE DISCREPANCIES LISTED.
 -}`);
         break;
+      case '760':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I760MYBANKBBAAXXXXN}{4:
+:27: 1/1
+:20: GUARANTEE-REF-1
+:30: 240801
+:40C: URDG
+:41A: ISSUINGBANKBIC
+:45L: GUARANTEE DETAILS...
+:77C: FURTHER DETAILS...
+-}`);
+        break;
+      case '767':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I767MYBANKBBAAXXXXN}{4:
+:20: AMEND-GUAR-REF-2
+:21: GUARANTEE-REF-1
+:30: 240802
+:79: THE GUARANTEE IS AMENDED AS FOLLOWS: INCREASE OF AMOUNT TO USD200000.
+-}`);
+        break;
+      case '768':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I768MYBANKBBAAXXXXN}{4:
+:20: ACK-GUAR-REF-3
+:21: AMEND-GUAR-REF-2
+:72: WE ACKNOWLEDGE RECEIPT AND ACCEPTANCE OF THE AMENDMENT.
+-}`);
+        break;
+      case '769':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I769MYBANKBBAAXXXXN}{4:
+:20: RELEASE-GUAR-REF-4
+:21: GUARANTEE-REF-1
+:34B: USD50000,
+:72: WE ADVISE A REDUCTION IN THE GUARANTEE AMOUNT. OUR LIABILITY IS NOW USD150000.
+-}`);
+        break;
+      case '799':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:O799MYBANKBBAAXXXXN}{4:
+:20: FREE-FORMAT-REF-5
+:21: GUARANTEE-REF-1
+:79: THIS IS A FREE FORMAT MESSAGE REGARDING THE GUARANTEE.
+PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
+-}`);
+        break;
     }
   };
 
@@ -260,6 +302,11 @@ ADDRESS
                     <SelectItem value="747">MT 747 - Amendment to an Authorization to Reimburse</SelectItem>
                     <SelectItem value="750">MT 750 - Advice of Discrepancy</SelectItem>
                     <SelectItem value="752">MT 752 - Authorization to Pay/Accept/Negotiate</SelectItem>
+                    <SelectItem value="760">MT 760 - Issue of a Guarantee</SelectItem>
+                    <SelectItem value="767">MT 767 - Amendment to a Guarantee</SelectItem>
+                    <SelectItem value="768">MT 768 - Acknowledgment of a Guarantee/Amendment</SelectItem>
+                    <SelectItem value="769">MT 769 - Advice of Reduction or Release</SelectItem>
+                    <SelectItem value="799">MT 799 - Free Format</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
