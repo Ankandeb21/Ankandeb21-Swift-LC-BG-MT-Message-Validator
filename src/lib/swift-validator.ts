@@ -3,6 +3,19 @@ export interface ValidationError {
   message: string;
 }
 
+export const getSwiftMessageType = (message: string): string | null => {
+  const block2Match = message.match(/{2:I(\d{3})/);
+  if (block2Match && block2Match[1]) {
+    return `MT ${block2Match[1]}`;
+  }
+  const block2MatchO = message.match(/{2:O(\d{3})/);
+  if (block2MatchO && block2MatchO[1]) {
+    return `MT ${block2MatchO[1]}`;
+  }
+  return null;
+};
+
+
 // A simplified set of rules for MT700 validation.
 // This is not exhaustive and for demonstration purposes.
 const mt700Rules = [
@@ -57,7 +70,7 @@ const mt700Rules = [
     field: ':32B:',
     name: 'Currency Code, Amount',
     mandatory: true,
-    regex: /^:32B:\s*[A-Z]{3}\d+([,.]\d{1,2})?,?$/,
+    regex: /^:32B:\s*[A-Z]{3}\d+([,.]\d{1,2})?$/,
     formatError: 'Field :32B: must have a 3-letter currency code and a numeric amount.',
   },
   {

@@ -1,16 +1,18 @@
 'use server';
 
 import { generateFixSuggestions } from '@/ai/flows/generate-fix-suggestions';
-import { validateSwiftMessage, type ValidationError } from '@/lib/swift-validator';
+import { validateSwiftMessage, type ValidationError, getSwiftMessageType } from '@/lib/swift-validator';
 
 interface ValidationSuccess {
   status: 'valid';
+  messageType: string | null;
 }
 
 interface ValidationInvalid {
   status: 'invalid';
   errors: ValidationError[];
   suggestions: string[];
+  messageType: string | null;
 }
 
 interface ValidationErrorResponse {
@@ -31,10 +33,11 @@ export async function validateMessageAction(
     return { status: 'error', message: ''};
   }
 
+  const messageType = getSwiftMessageType(message);
   const validationErrors = validateSwiftMessage(message);
 
   if (validationErrors.length === 0) {
-    return { status: 'valid' };
+    return { status: 'valid', messageType };
   }
 
   try {
@@ -47,6 +50,7 @@ export async function validateMessageAction(
       status: 'invalid',
       errors: validationErrors,
       suggestions: aiSuggestions.suggestions,
+      messageType,
     };
   } catch (error) {
     console.error('Error getting AI suggestions:', error);
@@ -55,6 +59,7 @@ export async function validateMessageAction(
       status: 'invalid',
       errors: validationErrors,
       suggestions: ['AI-powered suggestions are currently unavailable. Please check the validation errors manually.'],
+      messageType,
     };
   }
 }

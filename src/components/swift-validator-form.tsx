@@ -323,7 +323,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
               <CardTitle>Validation Successful</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>The SWIFT message is valid.</p>
+              <p>The {state.messageType} message is valid.</p>
             </CardContent>
           </Card>
         )}
@@ -333,7 +333,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
             <Card className="shadow-lg border-destructive/50 border-2 animate-in fade-in-50 zoom-in-95">
               <CardHeader className="flex-row items-center gap-4 space-y-0">
                 <XCircle className="h-10 w-10 text-destructive" />
-                <CardTitle>Validation Failed</CardTitle>
+                <CardTitle>Validation Failed {state.messageType ? `for ${state.messageType}`: ''}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
                  <p>{state.errors.length} error(s) found in the message.</p>
