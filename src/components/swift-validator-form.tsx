@@ -8,8 +8,8 @@ import {
   CheckCircle2,
   Lightbulb,
   Loader2,
+  MessageSquarePlus,
   Rocket,
-  Shuffle,
   XCircle,
 } from 'lucide-react';
 
@@ -24,11 +24,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const initialState: ValidationResult | null = null;
 
 const validSamples = [
-  `{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
+  { name: 'MT 700 (1/2)', message: `{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
 :27: 1/1
 :40A: IRREVOCABLE
 :20: OUR-REF-12345
@@ -46,8 +52,8 @@ BY NEGOTIATION
 :49: CONFIRM
 :71B: ALL CHARGES OUTSIDE OF ISSUING
 BANK ARE FOR ACCOUNT OF BENEFICIARY
--}`,
-  `{1:F01YOURCODEBB20_0000000000}{2:I701MYBANKBBAAXXXXN}{3:{108:MT700 12345}}{4:
+-}`},
+  { name: 'MT 700 (2/2)', message: `{1:F01YOURCODEBB20_0000000000}{2:I701MYBANKBBAAXXXXN}{3:{108:MT700 12345}}{4:
 :27: 2/2
 :45B: DESCRIPTION OF GOODS & SERVICES
 FURTHER DESCRIPTION OF GOODS CONTINUED
@@ -55,8 +61,8 @@ FURTHER DESCRIPTION OF GOODS CONTINUED
 FURTHER DOCUMENTS REQUIRED CONTINUED
 :47B: ADDITIONAL CONDITIONS
 FURTHER ADDITIONAL CONDITIONS CONTINUED
--}`,
-  `{1:F01YOURCODEBB20_0000000000}{2:I707MYBANKBBAAXXXXN}{4:
+-}`},
+  { name: 'MT 707', message: `{1:F01YOURCODEBB20_0000000000}{2:I707MYBANKBBAAXXXXN}{4:
 :20: AMEND-REF-67890
 :21: OUR-REF-12345
 :31C: 240726
@@ -68,8 +74,8 @@ BENEFICIARY ADDRESS
 :32B: USD105000,00
 :34B: USD5000,00
 :79: NARRATIVE OF AMENDMENT...
--}`,
-  `{1:F01YOURCODEBB20_0000000000}{2:I710MYBANKBBAAXXXXN}{4:
+-}`},
+  { name: 'MT 710', message: `{1:F01YOURCODEBB20_0000000000}{2:I710MYBANKBBAAXXXXN}{4:
 :20: THEIR-REF-54321
 :21: OUR-REF-12345
 :31C: 240725
@@ -80,16 +86,16 @@ APPLICANT NAME
 BENEFICIARY NAME
 :32B: USD100000,00
 :72: ADVISING BANK'S CHARGES...
--}`,
-  `{1:F01YOURCODEBB20_0000000000}{2:I730MYBANKBBAAXXXXN}{4:
+-}`},
+  { name: 'MT 730', message: `{1:F01YOURCODEBB20_0000000000}{2:I730MYBANKBBAAXXXXN}{4:
 :20: ACK-REF-111
 :21: OUR-REF-12345
 :30: 240728
 :32B: USD100000,00
 :71B: OUR CHARGES...
 :72: WE ACKNOWLEDGE RECEIPT OF THE DOCUMENTARY CREDIT.
--}`,
-  `{1:F01YOURCODEBB20_0000000000}{2:I740MYBANKBBAAXXXXN}{4:
+-}`},
+  { name: 'MT 740', message: `{1:F01YOURCODEBB20_0000000000}{2:I740MYBANKBBAAXXXXN}{4:
 :20: AUTH-REF-333
 :31D: 250131LONDON
 :40B: IRREVOCABLE
@@ -97,8 +103,8 @@ BENEFICIARY NAME
 :42A: DRAWEEBANKBIC
 :32B: USD50000,00
 :71B: ALL CHARGES ARE FOR...
--}`,
-  `{1:F01YOURCODEBB20_0000000000}{2:I760MYBANKBBAAXXXXN}{4:
+-}`},
+  { name: 'MT 760', message: `{1:F01YOURCODEBB20_0000000000}{2:I760MYBANKBBAAXXXXN}{4:
 :27: 1/1
 :20: GUARANTEE-REF-1
 :30: 240801
@@ -106,7 +112,7 @@ BENEFICIARY NAME
 :41A: ISSUINGBANKBIC
 :45L: GUARANTEE DETAILS...
 :77C: FURTHER DETAILS...
--}`,
+-}`},
 ];
 
 function SubmitButton() {
@@ -139,9 +145,8 @@ export function SwiftValidatorForm() {
     }
   }, [state]);
 
-  const handleRandomSampleClick = () => {
-    const randomIndex = Math.floor(Math.random() * validSamples.length);
-    setMessage(validSamples[randomIndex]);
+  const handleSampleSelect = (sampleMessage: string) => {
+    setMessage(sampleMessage);
   };
 
   return (
@@ -163,10 +168,24 @@ export function SwiftValidatorForm() {
               />
               <div className="flex flex-col sm:flex-row gap-2">
                 <SubmitButton />
-                <Button type="button" variant="outline" onClick={handleRandomSampleClick}>
-                  <Shuffle className="mr-2" />
-                  Load Random Valid Sample
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button type="button" variant="outline">
+                      <MessageSquarePlus className="mr-2" />
+                      Load a sample message
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {validSamples.map((sample) => (
+                      <DropdownMenuItem
+                        key={sample.name}
+                        onSelect={() => handleSampleSelect(sample.message)}
+                      >
+                        {sample.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </form>
           </CardContent>
