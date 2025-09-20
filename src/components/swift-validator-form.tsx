@@ -22,6 +22,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const initialState: ValidationResult | null = null;
 
@@ -56,6 +63,7 @@ export function SwiftValidatorForm() {
   }, [state]);
 
   const handleSampleClick = (type: string) => {
+    if (!type) return;
     switch (type) {
       case 'valid-700':
         setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I700MYBANKBBAAXXXXN}{4:
@@ -167,14 +175,19 @@ ADDRESS
               />
               <div className="flex flex-col sm:flex-row gap-2">
                 <SubmitButton />
-              </div>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                <Button type="button" variant="outline" onClick={() => handleSampleClick('valid-700')}>Load MT700 (Valid)</Button>
-                <Button type="button" variant="outline" onClick={() => handleSampleClick('invalid-700')}>Load MT700 (Invalid)</Button>
-                <Button type="button" variant="outline" onClick={() => handleSampleClick('701')}>Load MT701</Button>
-                <Button type="button" variant="outline" onClick={() => handleSampleClick('707')}>Load MT707</Button>
-                <Button type="button" variant="outline" onClick={() => handleSampleClick('710')}>Load MT710</Button>
-                <Button type="button" variant="outline" onClick={() => handleSampleClick('720')}>Load MT720</Button>
+                <Select onValueChange={handleSampleClick}>
+                  <SelectTrigger className="w-full sm:w-[280px]">
+                    <SelectValue placeholder="Load a sample message..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="valid-700">MT 700 - Issue of a Documentary Credit (Valid)</SelectItem>
+                    <SelectItem value="invalid-700">MT 700 - Issue of a Documentary Credit (Invalid)</SelectItem>
+                    <SelectItem value="701">MT 701 - Issue of a Documentary Credit (Subsequent)</SelectItem>
+                    <SelectItem value="707">MT 707 - Amendment to a Documentary Credit</SelectItem>
+                    <SelectItem value="710">MT 710 - Advice of a Third Bank’s DC</SelectItem>
+                    <SelectItem value="720">MT 720 - Transfer of a Documentary Credit</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </form>
           </CardContent>
