@@ -11,6 +11,7 @@ import {
   MessageSquarePlus,
   Rocket,
   XCircle,
+  ChevronDown,
 } from 'lucide-react';
 
 import { validateMessageAction, type ValidationResult } from '@/app/actions';
@@ -305,12 +306,15 @@ export function SwiftValidatorForm() {
                 <SubmitButton />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button type="button" variant="outline">
-                      <MessageSquarePlus className="mr-2" />
-                      Load a sample message
+                    <Button type="button" variant="outline" className="w-full sm:w-auto justify-between">
+                      <div className="flex items-center">
+                        <MessageSquarePlus className="mr-2" />
+                        Load a sample message
+                      </div>
+                      <ChevronDown />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent>
+                  <DropdownMenuContent className='w-[--radix-dropdown-menu-trigger-width]'>
                     {sampleMessages.map((sample) => (
                       <DropdownMenuItem
                         key={sample.name}
