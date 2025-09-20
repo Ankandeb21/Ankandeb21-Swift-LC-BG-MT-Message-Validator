@@ -153,6 +153,73 @@ ADDRESS
 :72: REIMBURSEMENT INSTRUCTIONS...
 -}`);
         break;
+      case '730':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I730MYBANKBBAAXXXXN}{4:
+:20: ACK-REF-111
+:21: OUR-REF-12345
+:30: 240728
+:32B: USD100000,
+:71B: OUR CHARGES...
+:72: WE ACKNOWLEDGE RECEIPT OF THE DOCUMENTARY CREDIT.
+-}`);
+        break;
+      case '732':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I732MYBANKBBAAXXXXN}{4:
+:20: NEG-REF-222
+:21: OUR-REF-12345
+:32A: 240728USD100000,
+:72: WE HAVE NEGOTIATED THE DOCUMENTS AND PAID AS PER YOUR INSTRUCTIONS.
+-}`);
+        break;
+      case '740':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I740MYBANKBBAAXXXXN}{4:
+:20: AUTH-REF-333
+:31D: 250131LONDON
+:40B: IRREVOCABLE
+:41A: REIMBURSINGBANKBIC
+:42A: DRAWEEBANKBIC
+:32B: USD50000,
+:71B: ALL CHARGES ARE FOR...
+-}`);
+        break;
+      case '742':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I742MYBANKBBAAXXXXN}{4:
+:20: CLAIM-REF-444
+:21: AUTH-REF-333
+:32B: USD50000,
+:33A: 240801USD50000,
+:57A: BENEFICIARYBANKBIC
+:72: WE CLAIM REIMBURSEMENT AS PER YOUR AUTHORIZATION.
+-}`);
+        break;
+      case '747':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I747MYBANKBBAAXXXXN}{4:
+:20: AMEND-AUTH-555
+:21: AUTH-REF-333
+:30: 240805
+:32B: INCREASE OF USD10000,
+:33B: USD60000,
+:72: THE REIMBURSEMENT AUTHORIZATION IS AMENDED AS FOLLOWS.
+-}`);
+        break;
+      case '750':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I750MYBANKBBAAXXXXN}{4:
+:20: DISCREP-REF-666
+:21: OUR-REF-12345
+:32B: USD100000,
+:77J: THE FOLLOWING DISCREPANCIES WERE FOUND:
+- LATE SHIPMENT
+- DOCUMENTS NOT PRESENTED WITHIN THE STIPULATED TIME.
+-}`);
+        break;
+      case '752':
+        setMessage(`{1:F01YOURCODEBB20_0000000000}{2:I752MYBANKBBAAXXXXN}{4:
+:20: AUTH-PAY-777
+:21: OUR-REF-12345
+:32B: USD100000,
+:72: WE AUTHORIZE YOU TO PAY/ACCEPT/NEGOTIATE THE DOCUMENTS PRESENTED UNDER THE SUBJECT CREDIT NOTWITHSTANDING THE DISCREPANCIES LISTED.
+-}`);
+        break;
     }
   };
 
@@ -186,6 +253,13 @@ ADDRESS
                     <SelectItem value="707">MT 707 - Amendment to a Documentary Credit</SelectItem>
                     <SelectItem value="710">MT 710 - Advice of a Third Bank’s DC</SelectItem>
                     <SelectItem value="720">MT 720 - Transfer of a Documentary Credit</SelectItem>
+                    <SelectItem value="730">MT 730 - Acknowledgment of LC</SelectItem>
+                    <SelectItem value="732">MT 732 - Advice of Acceptance/Negotiation</SelectItem>
+                    <SelectItem value="740">MT 740 - Authorization to Reimburse</SelectItem>
+                    <SelectItem value="742">MT 742 - Reimbursement Claim</SelectItem>
+                    <SelectItem value="747">MT 747 - Amendment to an Authorization to Reimburse</SelectItem>
+                    <SelectItem value="750">MT 750 - Advice of Discrepancy</SelectItem>
+                    <SelectItem value="752">MT 752 - Authorization to Pay/Accept/Negotiate</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
