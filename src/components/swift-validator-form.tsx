@@ -269,7 +269,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
       <div className="flex flex-col gap-4">
-        <Card className="border-border/60">
+        <Card>
           <CardHeader>
             <CardTitle>SWIFT Message Input</CardTitle>
           </CardHeader>
@@ -278,7 +278,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
               <Textarea
                 name="message"
                 placeholder="Paste your SWIFT MT message here..."
-                className="min-h-[400px] font-mono text-sm bg-background/50 border-input focus-visible:ring-primary"
+                className="min-h-[400px] font-mono text-sm bg-background/50 focus-visible:ring-primary"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
@@ -324,7 +324,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
               <CardTitle>Validation Successful</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className='text-green-400'>The {state.messageType} message is valid.</p>
+              <p className='text-green-600 dark:text-green-400'>The {state.messageType} message is valid.</p>
             </CardContent>
           </Card>
         )}
@@ -337,9 +337,9 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
                 <CardTitle>Validation Failed {state.messageType ? `for ${state.messageType}`: ''}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
-                 <p className='text-red-400'>{state.errors.length} error(s) found in the message.</p>
+                 <p className='text-red-600 dark:text-red-400'>{state.errors.length} error(s) found in the message.</p>
                  {state.errors.map((error, index) => (
-                    <Alert key={index} variant="destructive" className='bg-destructive/20'>
+                    <Alert key={index} variant="destructive" className='bg-destructive/10'>
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>{error.field}</AlertTitle>
                       <AlertDescription>{error.message}</AlertDescription>
@@ -349,7 +349,7 @@ PLEASE PROVIDE US WITH THE STATUS OF THE UNDERLYING CONTRACT.
             </Card>
 
             {state.suggestions && state.suggestions.length > 0 && (
-              <Card className="border-primary/30 bg-primary/10 animate-in fade-in-50 zoom-in-95" style={{ animationDelay: '150ms' }}>
+              <Card className="border-primary/30 bg-primary/5 animate-in fade-in-50 zoom-in-95" style={{ animationDelay: '150ms' }}>
                 <CardHeader className="flex-row items-center gap-4 space-y-0">
                     <Lightbulb className="h-10 w-10 text-primary" />
                     <CardTitle>AI-Powered Fix Suggestions</CardTitle>
