@@ -15,7 +15,6 @@ export default function Home() {
       <SwiftValidatorForm />
       
       <footer className="text-center mt-16 text-muted-foreground text-sm">
-        <p>Powered by GenAI. For demonstration purposes only.</p>
         <p>&copy; {new Date().getFullYear()} SWIFT Validator. All Rights Reserved.</p>
       </footer>
     </main>
