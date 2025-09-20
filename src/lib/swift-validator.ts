@@ -57,7 +57,7 @@ const mt700Rules = [
     field: ':32B:',
     name: 'Currency Code, Amount',
     mandatory: true,
-    regex: /^:32B:\s*[A-Z]{3}\d+([,.]\d{1,2})?$/,
+    regex: /^:32B:\s*[A-Z]{3}\d+([,.]\d{1,2})?,?$/,
     formatError: 'Field :32B: must have a 3-letter currency code and a numeric amount.',
   },
   {
