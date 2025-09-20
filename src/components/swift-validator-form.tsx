@@ -400,7 +400,7 @@ export function SwiftValidatorForm() {
               <CardTitle>Validation Successful</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className='text-accent-foreground/80'>The {state.messageType} message is valid.</p>
+              <p className='text-foreground/80'>The {state.messageType} message is valid.</p>
             </CardContent>
           </Card>
         )}
@@ -450,3 +450,5 @@ export function SwiftValidatorForm() {
     </div>
   );
 }
+
+    
