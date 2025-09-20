@@ -31,6 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const initialState: ValidationResult | null = null;
 
@@ -315,14 +316,16 @@ export function SwiftValidatorForm() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className='w-[--radix-dropdown-menu-trigger-width]'>
-                    {sampleMessages.map((sample) => (
-                      <DropdownMenuItem
-                        key={sample.name}
-                        onSelect={() => handleSampleSelect(sample.message)}
-                      >
-                        {sample.name}
-                      </DropdownMenuItem>
-                    ))}
+                    <ScrollArea className="h-72">
+                      {sampleMessages.map((sample) => (
+                        <DropdownMenuItem
+                          key={sample.name}
+                          onSelect={() => handleSampleSelect(sample.message)}
+                        >
+                          {sample.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </ScrollArea>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
