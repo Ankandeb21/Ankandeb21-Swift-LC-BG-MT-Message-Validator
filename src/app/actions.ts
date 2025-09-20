@@ -29,7 +29,6 @@ export async function validateMessageAction(
   const message = formData.get('message') as string;
 
   if (!message || message.trim().length === 0) {
-    // We don't return an error state, just clear the results.
     return { status: 'error', message: ''};
   }
 
@@ -54,7 +53,7 @@ export async function validateMessageAction(
     };
   } catch (error) {
     console.error('Error getting AI suggestions:', error);
-    // Return errors even if AI fails
+    // Return errors even if AI fails, but with a message indicating the issue.
     return {
       status: 'invalid',
       errors: validationErrors,
