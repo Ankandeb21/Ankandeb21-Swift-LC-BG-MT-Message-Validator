@@ -77,7 +77,7 @@ INSTRUCTIONS TO PAYING/ACCEPTING/NEGOTIATING BANK...
 -}`
   },
   {
-    name: 'MT 701 - Issue of a Documentary Credit (Second & Subsequent Pages)',
+    name: 'MT 701 - Issue of a Documentary Credit (Cont.)',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I701MYBANKBBAAXXXXN}{3:{108:MT700{RANDOM_REF}}}{4:
 :20: DC-{RANDOM_REF_SHORT}
 :21: PREV-MSG-REF
@@ -105,7 +105,7 @@ NARRATIVE OF AMENDMENT...
 -}`
   },
   {
-    name: 'MT 710 - Advice of a Third Bank’s Documentary Credit',
+    name: 'MT 710 - Advice of a Third Bank’s DC',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I710MYBANKBBAAXXXXN}{4:
 :20: THEIR-{RANDOM_REF_SHORT}
 :21: OUR-REF-{RANDOM_REF_SHORT}
@@ -151,7 +151,7 @@ WE ACKNOWLEDGE RECEIPT OF THE DOCUMENTARY CREDIT.
 -}`
   },
     {
-    name: 'MT 732 - Advice of Acceptance/Negotiation',
+    name: 'MT 732 - Advice of Discharge',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I732MYBANKBBAAXXXXN}{4:
 :20: ADVICE-{RANDOM_REF_SHORT}
 :21: YOUR-REF-123
@@ -186,7 +186,7 @@ OUR CHARGES...
 -}`
   },
   {
-    name: 'MT 747 - Amendment to an Authorization to Reimburse',
+    name: 'MT 747 - Amendment to an Auth to Reimburse',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I747MYBANKBBAAXXXXN}{4:
 :20: AMEND-AUTH-{RANDOM_REF_SHORT}
 :21: ORIGINAL-AUTH-REF
@@ -207,7 +207,7 @@ DESCRIPTION OF DISCREPANCIES...
 -}`
   },
   {
-    name: 'MT 752 - Authorization to Pay/Accept/Negotiate',
+    name: 'MT 752 - Auth to Pay/Accept/Negotiate',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I752MYBANKBBAAXXXXN}{4:
 :20: AUTH-PAY-{RANDOM_REF_SHORT}
 :21: DC-NUMBER
@@ -246,7 +246,7 @@ FURTHER DETAILS...
 -}`
   },
   {
-    name: 'MT 768 - Acknowledgment of a Guarantee/Amendment',
+    name: 'MT 768 - Acknowledgment of a Guarantee',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I768MYBANKBBAAXXXXN}{4:
 :20: ACK-GUAR-{RANDOM_REF_SHORT}
 :21: GUARANTEE-{RANDOM_REF_SHORT}
@@ -256,7 +256,7 @@ WE ACKNOWLEDGE RECEIPT OF THE GUARANTEE/AMENDMENT.
 -}`
   },
   {
-    name: 'MT 769 - Advice of Reduction or Release of a Guarantee',
+    name: 'MT 769 - Advice of Reduction or Release',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I769MYBANKBBAAXXXXN}{4:
 :20: REDUCE-REL-{RANDOM_REF_SHORT}
 :21: GUARANTEE-{RANDOM_REF_SHORT}

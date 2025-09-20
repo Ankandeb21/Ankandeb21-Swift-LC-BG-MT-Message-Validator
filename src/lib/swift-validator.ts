@@ -72,21 +72,21 @@ const mt700Rules = [
     field: ':50:',
     name: 'Applicant',
     mandatory: true,
-    regex: /^:50:(\r\n|\n).{1,50}((\r\n|\n).{1,50}){0,3}$/m,
+    regex: /^:50:(\r\n?|\n)((.|\r\n?|\n){1,200})$/m,
     formatError: 'Field :50: (Applicant) must contain name and address, up to 4 lines of 50 characters each.',
   },
   {
     field: ':59:',
     name: 'Beneficiary',
     mandatory: true,
-    regex: /^:59:(\r\n|\n).{1,50}((\r\n|\n).{1,50}){0,3}$/m,
+    regex: /^:59:(\r\n?|\n)((.|\r\n?|\n){1,200})$/m,
     formatError: 'Field :59: (Beneficiary) must contain name and address, up to 4 lines of 50 characters each.',
   },
   {
     field: ':32B:',
     name: 'Currency Code, Amount',
     mandatory: true,
-    regex: /^:32B:\s*[A-Z]{3}\d{1,15}(?:,\d{1,2})?$/m,
+    regex: /^:32B:\s*[A-Z]{3}\d{1,15}(,\d{1,2})?$/m,
     formatError: 'Field :32B: (Currency Code, Amount) must have a 3-letter currency code and a valid numeric amount (e.g., USD100000,50).',
   },
   {
@@ -107,7 +107,7 @@ const mt700Rules = [
     field: ':39C:',
     name: 'Additional Amounts Covered',
     mandatory: false,
-    regex: /^:39C:(\r\n|\n).{1,50}((\r\n|\n).{1,50}){0,3}$/m,
+    regex: /^:39C:(\r\n?|\n)((.|\r\n?|\n){1,199})$/m,
     formatError: 'Field :39C: (Additional Amounts Covered) must be up to 4 lines of 50 characters each.',
   },
   {
@@ -121,7 +121,7 @@ const mt700Rules = [
     field: ':42C:',
     name: 'Drafts at...',
     mandatory: false,
-    regex: /^:42C:(\r\n|\n).{1,35}((\r\n|\n).{1,35}){0,1}$/m,
+    regex: /^:42C:(\r\n?|\n)((.|\r\n?|\n){1,69})$/m,
     formatError: 'Field :42C: (Drafts at) must be up to 2 lines of 35 characters each.',
   },
   {
@@ -134,7 +134,7 @@ const mt700Rules = [
     field: ':42P:',
     name: 'Deferred Payment Details',
     mandatory: false,
-    regex: /^:42P:(\r\n|\n).{1,50}((\r\n|\n).{1,50}){0,3}$/m,
+    regex: /^:42P:(\r\n?|\n)((.|\r\n?|\n){1,199})$/m,
     formatError: 'Field :42P: (Deferred Payment Details) must be up to 4 lines of 50 characters each.',
   },
   {
@@ -190,14 +190,14 @@ const mt700Rules = [
     field: ':44D:',
     name: 'Shipment Period',
     mandatory: false,
-    regex: /^:44D:(\r\n|\n).{1,50}((\r\n|\n).{1,50}){0,5}$/m,
+    regex: /^:44D:(\r\n?|\n)((.|\r\n?|\n){1,299})$/m,
     formatError: 'Field :44D: (Shipment Period) must be up to 6 lines of 50 characters each.',
   },
   {
     field: ':48:',
     name: 'Period for Presentation',
     mandatory: false,
-    regex: /^:48:(\r\n|\n).{1,50}((\r\n|\n).{1,50}){0,3}$/m,
+    regex: /^:48:(\r\n?|\n)((.|\r\n?|\n){1,199})$/m,
     formatError: 'Field :48: (Period for Presentation) must be up to 4 lines of 50 characters.',
   },
   {
@@ -218,20 +218,20 @@ const mt700Rules = [
     field: ':71B:',
     name: 'Charges',
     mandatory: false,
-    regex: /^:71B:(\r\n|\n).{1,35}((\r\n|\n).{1,35}){0,5}$/m,
+    regex: /^:71B:(\r\n?|\n)((.|\r\n?|\n){1,209})$/m,
     formatError: 'Field :71B: (Charges) must be up to 6 lines of 35 characters each.',
   },
   {
     field: ':71D:',
     name: 'Charges',
     mandatory: false,
-    regex: /^:71D:(\r\n|\n).{1,35}((\r\n|\n).{1,35}){0,5}$/m,
+    regex: /^:71D:(\r\n?|\n)((.|\r\n?|\n){1,209})$/m,
     formatError: 'Field :71D: (Charges) must be up to 6 lines of 35 characters each.',
   },
 ];
 
 const mt701Rules = [
-    {
+  {
     field: ':27:',
     name: 'Sequence of Total',
     mandatory: true,
@@ -252,6 +252,13 @@ const mt701Rules = [
     regex: /^:21:\s*[a-zA-Z0-9-]{1,16}$/m,
     formatError: 'Field :21: (Presenting Bank\'s Reference) must be 1 to 16 alphanumeric characters and hyphens.',
   },
+  {
+    field: ':45B:',
+    name: 'Description of Goods/Services',
+    mandatory: false,
+    regex: /^:45B:(\r\n?|\n)((.|\r\n?|\n){1,4999})$/m,
+    formatError: 'Field :45B: (Description of Goods/Services) has an invalid format.',
+  },
 ];
 
 
@@ -265,25 +272,10 @@ const messageRules: { [key: string]: any[] } = {
 export const validateSwiftMessage = (message: string): ValidationError[] => {
   const errors: ValidationError[] = [];
   
-  const messageType = getSwiftMessageType(message);
-  const rules = messageType ? messageRules[messageType] || [] : [];
-
-  // Basic block structure check for all messages
   if (!message.startsWith('{1:') || !message.includes('{2:')) {
     errors.push({ field: 'Structure', message: 'Invalid basic block structure. Message must contain at least {1:} and {2:} blocks.' });
   }
-
-  // If no rules are defined for the message type, return after basic checks.
-  if (rules.length === 0) {
-      if (messageType) { // A known message type with no specific rules
-          // Potentially add more generic validation here in the future
-      } else { // An unknown or unidentifiable message type
-          errors.push({ field: 'Message Type', message: 'Could not determine SWIFT message type from Block 2.' });
-      }
-      return errors;
-  }
   
-  // If we have rules, proceed with detailed validation.
   const block4Match = message.replace(/\r\n/g, '\n').match(/{4:\s*\n((.|\n)*?)\n-}/);
   if (!block4Match) {
     errors.push({ field: 'Structure', message: 'Block 4 ({4:...}) is missing or malformed.' });
@@ -291,6 +283,17 @@ export const validateSwiftMessage = (message: string): ValidationError[] => {
   }
   
   const block4Content = block4Match[1];
+  
+  const messageType = getSwiftMessageType(message);
+  const rules = messageType ? messageRules[messageType] : undefined;
+
+  if (!rules) {
+      if (!messageType) { 
+          errors.push({ field: 'Message Type', message: 'Could not determine SWIFT message type from Block 2.' });
+      }
+      // For known types without rules, we currently don't add errors, allowing basic validation.
+      return errors;
+  }
   
   const fields = block4Content.split(/(?=\n:)/).map(f => f.trim());
 
@@ -317,12 +320,8 @@ export const validateSwiftMessage = (message: string): ValidationError[] => {
     const rule = rules.find(r => fieldTag.startsWith(r.field));
     
     if (rule && rule.formatError) {
-      let testableField = field;
-      if (!rule.regex.source.includes('\\n')) {
-          testableField = field.replace(/\r\n|\n/g, ' ');
-      }
-      
-      if (!rule.regex.test(testableField)) {
+      // Use the raw field with newlines for regex test
+      if (!rule.regex.test(field)) {
         errors.push({ field: rule.field, message: rule.formatError });
       }
     }
