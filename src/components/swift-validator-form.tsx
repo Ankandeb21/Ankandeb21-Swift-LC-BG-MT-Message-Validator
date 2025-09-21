@@ -1,8 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
-import { useFormStatus } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   AlertCircle,
   CheckCircle2,
@@ -15,7 +13,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
-import { validateMessageAction, type ValidationResult } from '@/app/actions';
+import { validateSwiftMessage, type ValidationError, getSwiftMessageType } from '@/lib/swift-validator';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,7 +32,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const initialState: ValidationResult | null = null;
+interface ValidationResult {
+  status: 'valid' | 'invalid' | 'error';
+  messageType?: string | null;
+  errors?: ValidationError[];
+  suggestions?: string[];
+  message?: string;
+}
 
 const sampleMessages = [
   {
@@ -101,7 +105,7 @@ NARRATIVE OF AMENDMENT...
 -}`
   },
   {
-    name: 'MT 710 - Advice of a Third Bank’s DC',
+    name: 'MT 710 - Advice of a Third Bank\'s DC',
     message: `{1:F01YOURCODEBB20_0000000000}{2:I710MYBANKBBAAXXXXN}{4:
 :20: THEIR-{RANDOM_REF_SHORT}
 :21: OUR-REF-{RANDOM_REF_SHORT}
@@ -115,7 +119,7 @@ BENEFICIARY NAME
 BENEFICIARY ADDRESS
 :32B: USD{RANDOM_AMOUNT}
 :72:
-ADVISING BANK'S CHARGES...
+ADVISING BANK\'S CHARGES...
 -}`
   },
     {
@@ -130,7 +134,7 @@ ADVISING BANK'S CHARGES...
 NEW BENEFICIARY (TRANSFEREE)
 ADDRESS
 :72:
-REIMBURSING BANK'S CHARGES...
+REIMBURSING BANK\'S CHARGES...
 -}`
   },
   {
@@ -277,36 +281,17 @@ OFTEN RELATED TO GUARANTEES OR OTHER TRANSACTIONS.
   }
 ];
 
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" size="lg" className="w-full sm:w-auto" aria-disabled={pending}>
-      {pending ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Validating...
-        </>
-      ) : (
-        <>
-          <Rocket className="mr-2 h-4 w-4" />
-          Validate Message
-        </>
-      )}
-    </Button>
-  );
-}
-
 export function SwiftValidatorForm() {
-  const [state, formAction] = useActionState(validateMessageAction, initialState);
   const [message, setMessage] = useState('');
+  const [result, setResult] = useState<ValidationResult | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    if (state?.status === 'valid' || state?.status === 'invalid') {
+    if (result?.status === 'valid' || result?.status === 'invalid') {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [state]);
+  }, [result]);
 
   const generateRandomMessage = (template: string) => {
     const today = new Date();
@@ -344,6 +329,60 @@ export function SwiftValidatorForm() {
     setMessage(generateRandomMessage(sampleMessage));
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!message || message.trim().length === 0) {
+      setResult({ status: 'error', message: 'Please enter a SWIFT message to validate.' });
+      return;
+    }
+
+    setIsLoading(true);
+    setResult(null);
+
+    try {
+      // Simulate API delay for better UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const messageType = getSwiftMessageType(message);
+      const validationErrors = validateSwiftMessage(message);
+
+      if (validationErrors.length === 0) {
+        setResult({ status: 'valid', messageType });
+      } else {
+        // Generate simple suggestions based on common errors
+        const suggestions = validationErrors.map(error => {
+          if (error.field.includes('20')) {
+            return `Check the reference number format in field ${error.field}. It should be alphanumeric and up to 16 characters.`;
+          } else if (error.field.includes('32B')) {
+            return `Verify the currency and amount format in field ${error.field}. Use format: CCCAMOUNT (e.g., USD100000,00).`;
+          } else if (error.field.includes('31C') || error.field.includes('30')) {
+            return `Ensure the date in field ${error.field} is in YYMMDD format (e.g., 241225 for December 25, 2024).`;
+          } else if (error.field.includes('BIC')) {
+            return `Check the BIC code format in field ${error.field}. It should be 8 or 11 characters (e.g., DEUTDEFFXXX).`;
+          } else {
+            return `Review the content and format of field ${error.field}. ${error.message}`;
+          }
+        });
+
+        setResult({
+          status: 'invalid',
+          errors: validationErrors,
+          suggestions,
+          messageType,
+        });
+      }
+    } catch (error) {
+      console.error('Validation error:', error);
+      setResult({ 
+        status: 'error', 
+        message: 'An error occurred during validation. Please try again.' 
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
       <div className="flex flex-col gap-4">
@@ -352,7 +391,7 @@ export function SwiftValidatorForm() {
             <CardTitle>SWIFT Message Input</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={formAction} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <Textarea
                 name="message"
                 placeholder="Paste your SWIFT MT message here..."
@@ -362,7 +401,24 @@ export function SwiftValidatorForm() {
                 required
               />
               <div className="flex flex-col sm:flex-row gap-2">
-                <SubmitButton />
+                <Button 
+                  type="submit" 
+                  size="lg" 
+                  className="w-full sm:w-auto" 
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Validating...
+                    </>
+                  ) : (
+                    <>
+                      <Rocket className="mr-2 h-4 w-4" />
+                      Validate Message
+                    </>
+                  )}
+                </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button type="button" variant="outline" className="w-full sm:w-auto justify-between">
@@ -393,28 +449,28 @@ export function SwiftValidatorForm() {
       </div>
       
       <div ref={resultsRef} className="space-y-8 lg:min-h-[570px]">
-        {state?.status === 'valid' && (
+        {result?.status === 'valid' && (
           <Card className="border-accent/50 bg-accent/10 animate-in fade-in-50 zoom-in-95 shadow-lg">
             <CardHeader className="flex-row items-center gap-4 space-y-0">
               <CheckCircle2 className="h-10 w-10 text-accent" />
               <CardTitle>Validation Successful</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className='text-foreground/80'>The {state.messageType} message is valid.</p>
+              <p className='text-foreground/80'>The {result.messageType} message is valid.</p>
             </CardContent>
           </Card>
         )}
         
-        {state?.status === 'invalid' && (
+        {result?.status === 'invalid' && (
           <>
             <Card className="border-destructive/50 bg-destructive/10 animate-in fade-in-50 zoom-in-95 shadow-lg">
               <CardHeader className="flex-row items-center gap-4 space-y-0">
                 <XCircle className="h-10 w-10 text-destructive" />
-                <CardTitle>Validation Failed {state.messageType ? `for ${state.messageType}`: ''}</CardTitle>
+                <CardTitle>Validation Failed {result.messageType ? `for ${result.messageType}`: ''}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
-                 <p className='text-destructive/90'>{state.errors.length} error(s) found in the message.</p>
-                 {state.errors.map((error, index) => (
+                 <p className='text-destructive/90'>{result.errors?.length} error(s) found in the message.</p>
+                 {result.errors?.map((error, index) => (
                     <Alert key={index} variant="destructive" className='bg-destructive/10'>
                       <AlertCircle className="h-4 w-4" />
                       <AlertTitle>{error.field}</AlertTitle>
@@ -424,15 +480,15 @@ export function SwiftValidatorForm() {
               </CardContent>
             </Card>
 
-            {state.suggestions && state.suggestions.length > 0 && (
+            {result.suggestions && result.suggestions.length > 0 && (
               <Card className="border-primary/30 bg-primary/5 animate-in fade-in-50 zoom-in-95 shadow-lg" style={{ animationDelay: '150ms' }}>
                 <CardHeader className="flex-row items-center gap-4 space-y-0">
                     <Lightbulb className="h-10 w-10 text-primary" />
-                    <CardTitle>AI-Powered Fix Suggestions</CardTitle>
+                    <CardTitle>Fix Suggestions</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
                   <Accordion type="single" collapsible className="w-full">
-                    {state.suggestions?.map((suggestion, index) => (
+                    {result.suggestions?.map((suggestion, index) => (
                       <AccordionItem value={`item-${index}`} key={index}>
                         <AccordionTrigger>Suggestion #{index + 1}</AccordionTrigger>
                         <AccordionContent className="prose prose-sm max-w-none text-muted-foreground">
@@ -446,9 +502,19 @@ export function SwiftValidatorForm() {
             )}
           </>
         )}
+
+        {result?.status === 'error' && (
+          <Card className="border-destructive/50 bg-destructive/10 animate-in fade-in-50 zoom-in-95 shadow-lg">
+            <CardHeader className="flex-row items-center gap-4 space-y-0">
+              <XCircle className="h-10 w-10 text-destructive" />
+              <CardTitle>Error</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className='text-destructive/90'>{result.message}</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
 }
-
-    
