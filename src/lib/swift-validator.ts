@@ -16,10 +16,8 @@ export const getSwiftMessageType = (message: string): string | null => {
 };
 
 // Generic validation helpers
-const isMandatory = (mandatory: boolean, content: string, tag: string) => mandatory && !content.includes(`:${tag}:`);
 const length = (len: number) => new RegExp(`^.{1,${len}}$`);
 const multiline = (lines: number, chars: number) => new RegExp(`^(.{1,${chars}}(\\r\\n?|\\n)?){1,${lines}}$`);
-const alphanumeric = () => /^[a-zA-Z0-9]+$/;
 const bic = () => /^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 const date = () => /^\d{6}$/;
 const currencyAndAmount = () => /^[A-Z]{3}\d{1,15},\d{1,2}$/;
