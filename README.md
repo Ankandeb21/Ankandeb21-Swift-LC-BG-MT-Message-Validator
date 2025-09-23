@@ -4,7 +4,10 @@ A React application for validating SWIFT MT messages with intelligent suggestion
 
 ## Features
 
-- Validate SWIFT MT messages (MT 700, 701, 707, 710, 720, 730, 732, 740, 742, 747, 750, 752, 760, 767, 768, 769, 799)
+- **Comprehensive SWIFT MT Validation:**
+  - **Documentary Credits:** MT 700, 701, 705, 707, 708, 710, 711, 720, 721, 730, 732, 734, 740, 742, 744, 747, 750, 752, 754, 756, 759
+  - **Guarantees/Standby LCs:** MT 760, 761, 765, 767, 768, 769, 775, 785, 786, 787
+  - **Common Group:** MT 799 (Free Format)
 - Real-time validation with detailed error reporting
 - Sample message templates for testing
 - Responsive design with modern UI components
